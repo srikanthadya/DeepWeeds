@@ -1,0 +1,3 @@
+epoch,categorical_accuracy,loss,lr,val_categorical_accuracy,val_loss
+0,nan,nan,1e-04,nan,nan
+1,nan,nan,1e-04,nan,nan

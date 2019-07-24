@@ -21,14 +21,14 @@ from keras.applications.resnet50 import ResNet50
 from keras.layers import Dense, GlobalAveragePooling2D
 
 # Global paths
-OUTPUT_DIRECTORY = "./outputs/"
-LABEL_DIRECTORY = "./labels/"
-MODEL_DIRECTORY = "./models/"
+OUTPUT_DIRECTORY = "outputs"
+LABEL_DIRECTORY = "labels/"
+MODEL_DIRECTORY = "models/"
 MODEL_URL = "https://nextcloud.qriscloud.org.au/index.php/s/Y7EhlkVMYCqxdg2/download"
-MODEL_ZIP_FILE = "./models/models.zip"
-IMG_DIRECTORY = "./images/"
+MODEL_ZIP_FILE = "models/models.zip"
+IMG_DIRECTORY = "images"
 IMG_URL = "https://nextcloud.qriscloud.org.au/index.php/s/a3KxPawpqkiorST/download"
-IMG_ZIP_FILE = "./images/images.zip"
+IMG_ZIP_FILE = "images/images.zip"
 
 # Global variables
 RAW_IMG_SIZE = (256, 256)
@@ -132,9 +132,10 @@ def cross_validate(model_name):
         train_label_file = "{}train_subset{}.csv".format(LABEL_DIRECTORY, k)
         val_label_file = "{}val_subset{}.csv".format(LABEL_DIRECTORY, k)
         test_label_file = "{}test_subset{}.csv".format(LABEL_DIRECTORY, k)
-        train_dataframe = pd.read_csv(train_label_file)
-        val_dataframe = pd.read_csv(val_label_file)
-        test_dataframe = pd.read_csv(test_label_file)
+        dtypes = {'Filename':'str','Label':'str'}
+        train_dataframe = pd.read_csv(train_label_file,dtype=dtypes)
+        val_dataframe = pd.read_csv(val_label_file,dtype=dtypes)
+        test_dataframe = pd.read_csv(test_label_file,dtype=dtypes)
         train_image_count = train_dataframe.shape[0]
         val_image_count = train_dataframe.shape[0]
         test_image_count = test_dataframe.shape[0]
@@ -220,7 +221,7 @@ def cross_validate(model_name):
 
         # Checkpoints for training
         model_checkpoint = ModelCheckpoint(output_directory + "lastbest-0.hdf5", verbose=1, save_best_only=True)
-        early_stopping = EarlyStopping(patience=STOPPING_PATIENCE, restore_best_weights=True)
+        early_stopping = EarlyStopping(patience=STOPPING_PATIENCE)
         tensorboard = TensorBoard(log_dir=output_directory, histogram_freq=0, write_graph=True, write_images=False)
         reduce_lr = ReduceLROnPlateau('val_loss', factor=0.5, patience=LR_PATIENCE, min_lr=0.000003125)
         model.compile(loss='binary_crossentropy', optimizer=Adam(lr=INITIAL_LR), metrics=['categorical_accuracy'])
